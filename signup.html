@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+	<title>Login V8</title>
+	<meta charset="UTF-8">
+    </head>
+    <body>
+    </body>
+    <script src="https://www.gstatic.com/firebasejs/6.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.6.0/firebase-auth.js"></script>
+
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyB0Om-pggrXGPrdTDmb-TLF8oefyWHVth4",
+            authDomain: "the-dave-initiative.firebaseapp.com",
+            databaseURL: "https://the-dave-initiative.firebaseio.com",
+            projectId: "the-dave-initiative",
+            storageBucket: "",
+            messagingSenderId: "637804637403",
+            appId: "1:637804637403:web:dec14656b88e73798fb0fe"
+        };
+        firebase.initializeApp(firebaseConfig);
+        var email = prompt("what's your email?");
+        var pass = prompt("set a password")
+        firebase.auth().createUserWithEmailAndPassword(email, pass).then(function() {
+            alert("done. please verify your email");
+            firebase.auth().currentUser.sendEmailVerification();
+        })
+    </script>
+</html>
