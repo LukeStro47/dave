@@ -19,7 +19,7 @@ function login() {
 function initApp() {
     firebase.auth().onAuthStateChanged(function(user) {
         if (user && document.getElementById('unique') != null) {
-            location.replace("../../dashboard.html");
+            location.replace("../dashboard.html");
         }
     });
 }
