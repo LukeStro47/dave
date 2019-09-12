@@ -31,5 +31,12 @@ function check() {
     }, 1000);
 }
 function callDave() {
-    
+    document.getElementById('callDave').style.display = "block";
+}
+function checkbox() {
+    if(document.getElementById('checkbx').checked == false) {
+        document.getElementById('time').style.display = "block";
+    } else {
+        document.getElementById('time').style.display = "none";
+    }
 }

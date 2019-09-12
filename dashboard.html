@@ -11,6 +11,32 @@
     <body onload="check()">
         <h1>The Dave Initiative</h1>
         <button onclick="callDave();">Call a Dave</button>
+        <div id="callDave" style="display: none">
+            <br>
+            <p>Location</p>
+            <input type="text" placeholder="Place">
+            <br>
+            <p>Name for Your Dave</p>
+            <select>
+                <option value="dave" selected>Dave</option>
+                <option value="david">David</option>
+                <option value="daveth">Daveth</option>
+                <option value="mDavid">Mr. Dave</option>
+                <option value="esp">Señor David</option>
+                <option value="fra">Monsieur David</option>
+                <option value="formal">Sir Dave</option>
+            </select>
+            <br>
+            <div id="time">
+                <p>Time</p>
+                <input type="time">
+                <br>
+            </div>
+            <input type="checkbox" value="now" oninput="checkbox()" id="checkbx"> Schedule my Dave for Now
+            <br>
+            <br>
+            <button onclick="completeDave()">Submit Request</button>
+        </div>
     </body>
     <script src="Login/js/auth.js"></script>
 </html>
