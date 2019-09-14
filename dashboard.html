@@ -14,10 +14,34 @@
         <div id="callDave" style="display: none">
             <br>
             <p>Location</p>
-            <input type="text" placeholder="Place">
+            <input type="text" placeholder="Place" id="place">
+            <br>
+            <p>Job/Special Notes</p>
+            <input type="text" placeholder="Info About Job" id="job">
+            <br>
+            <p>Duration</p>
+            <select id="hrs">
+                <option value="0">0 hrs</option>
+                <option value="1">1 hrs</option>
+                <option value="2">2 hrs</option>
+                <option value="3">3 hrs</option>
+                <option value="4">4 hrs</option>
+                <option value="5">5 hrs</option>
+            </select>
+            <select id="mins">
+                <option value="0">0 mins</option>
+                <option value="1">1 mins</option>
+                <option value="5">5 mins</option>
+                <option value="10">10 mins</option>
+                <option value="15">15 mins</option>
+                <option value="20">20 mins</option>
+                <option value="30">30 mins</option>
+                <option value="45">45 mins</option>
+                <option value="50">50 mins</option>
+            </select>
             <br>
             <p>Name for Your Dave</p>
-            <select>
+            <select id="preference">
                 <option value="dave" selected>Dave</option>
                 <option value="david">David</option>
                 <option value="daveth">Daveth</option>
@@ -25,11 +49,12 @@
                 <option value="esp">Señor David</option>
                 <option value="fra">Monsieur David</option>
                 <option value="formal">Sir Dave</option>
+                <option value="davante">Da'Vante</option>
             </select>
             <br>
             <div id="time">
                 <p>Time</p>
-                <input type="time">
+                <input type="time" id="time2">
                 <br>
             </div>
             <input type="checkbox" value="now" oninput="checkbox()" id="checkbx"> Schedule my Dave for Now

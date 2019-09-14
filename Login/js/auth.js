@@ -40,3 +40,30 @@ function checkbox() {
         document.getElementById('time').style.display = "none";
     }
 }
+function completeDave() {
+    if(document.getElementById("hrs").value == "0" && document.getElementById("mins").value == "0" || document.getElementById("job").value == "" || document.getElementById("place").value == "" || document.getElementById('time').style.display == "block" && document.getElementById('time2').value == "") {
+        alert("Please fill all fields");
+    } else {
+        document.getElementById('callDave').style.display = "none";
+        var timeCheck = 60;
+        setTimeout(function(){ alert("Hello"); }, 3000);
+    }
+}
+function findTime() {
+    var times = document.getElementById('time2').value.toString();
+    var next = times.substring(0, times.indexOf(':')) + times.substring(times.indexOf(":") + 1);
+    var hrs = parseInt(next.substring(0,2)) + parseInt(document.getElementById('hrs').value);
+    var mins = parseInt(next.substring(3)) + parseInt(document.getElementById('mins').value);
+    var cHrs = hrs;
+    var cMins = mins;
+    if(hrs.toString().length == 1) {
+        cHrs = "0" + hrs.toString();
+        console.log(cHrs);
+    }
+    if(mins.toString().length == 1) {
+        cMins = "0" + mins.toString();
+        console.log(cMins)
+    }
+    var to = cHrs.toString() + cMins.toString();
+    return next + "to" + to;
+}
