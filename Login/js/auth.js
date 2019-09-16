@@ -9,6 +9,8 @@ var firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 initApp();
+var canSearch = true;
+var canContinue = true;
 function login() {
     firebase.auth().signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value).catch(function(error) {
         var errorCode = error.code;
@@ -45,11 +47,48 @@ function completeDave() {
         alert("Please fill all fields");
     } else {
         document.getElementById('callDave').style.display = "none";
-        var timeCheck = 60;
-        setTimeout(function(){ alert("Hello"); }, 3000);
+        document.getElementById('waiting').style.display = "block";
+        firebase.database().ref().once('value').then(function(snapshot) {
+            var data = snapshot.val();
+            var jobN;
+            for(var i = 0; i < data.length + 1; i++) {
+                if(data[i] == null) {
+                    jobN = i;
+                    break;
+                }
+            }
+            firebase.database().ref('Jobs/' + jobN).update({
+                location: document.getElementById('place').value,
+                jobInfo: document.getElementById('job').value,
+                hrs: document.getElementById('hrs').value,
+                mins: document.getElementById('mins').value,
+                preference: document.getElementById('preference').value
+            });
+            if(document.getElementById('checkbx').checked == false) {
+                firebase.database().ref('Jobs/' + jobN).update({
+                    time: findTime()
+                });
+            }
+            onTimer();
+            for(var a = 0; a < data.List.length; a++) {
+                if(canContinue) {
+                    //send message
+                } else {
+                    break;
+                }
+            }
+            firebase.database().ref('Jobs/' + jobN).on('value', function(snapshot) {
+                var jobData = snapshot.val();
+                if(jobData.dave != "none") {
+                    canContinue = false;
+                    off();
+                    daveAccepted(jobN);
+                }
+            });
+        });
     }
 }
-function findTime() {
+function findToTime() {
     var times = document.getElementById('time2').value.toString();
     var next = times.substring(0, times.indexOf(':')) + times.substring(times.indexOf(":") + 1);
     var hrs = parseInt(next.substring(0,2)) + parseInt(document.getElementById('hrs').value);
@@ -66,4 +105,13 @@ function findTime() {
     }
     var to = cHrs.toString() + cMins.toString();
     return next + "to" + to;
+}
+function findTime() {
+    var times = document.getElementById('time2').value.toString();
+    var next = times.substring(0, times.indexOf(':')) + times.substring(times.indexOf(":") + 1);
+    return next;
+}
+function daveAccepted(num) {
+    document.getElementById('waiting').style.display = "none";
+    document.getElementById('accepted').style.display = "block";
 }

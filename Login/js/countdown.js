@@ -1,6 +1,11 @@
-function countdown() {
-    var countCheck = 60;
-    while(countCheck > 0) {
-        setTimeout(function(){ countCheck -= 1; document.getElementById('counter').innerHTML = countCheck;}, 1000);
+var i = 60
+function onTimer() {
+    document.getElementById('counter').innerHTML = i;
+    i--;
+    if (i < 0) {
+        alert('You lose!');
+    }
+    else {
+        setTimeout(onTimer, 1000);
     }
 }
