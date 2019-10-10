@@ -5,19 +5,34 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="css/dash.css">
         <script src="https://www.gstatic.com/firebasejs/6.6.0/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/6.6.0/firebase-database.js"></script>
         <script src="https://www.gstatic.com/firebasejs/6.6.0/firebase-auth.js"></script>
+        <!--<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+        <script>
+  var OneSignal = window.OneSignal || [];
+  OneSignal.push(function() {
+    OneSignal.init({
+      appId: "61295cee-3a56-4b12-8b44-2b1a99f7b3f4",
+      notifyButton: {
+        enable: true,
+      },
+    });
+  });
+</script>
+        <script src="assets/OneSignal/OneSignalSDKUpdaterWorker.js"></script>
+        <script src="assets/OneSignal/OneSignalSDKWorker.js"></script>!-->
         <title></title>
     </head>
     <body onload="check()">
         <h1>The Dave Initiative</h1>
-        <button onclick="callDave();">Call a Dave</button>
+        <button onclick="callDave();" id="cdButton">Call a Dave</button>
         <div id="callDave" style="display: none">
             <br>
             <p>Location</p>
             <input type="text" placeholder="Place" id="place">
             <br>
             <p>Job/Special Notes</p>
-            <input type="text" placeholder="Info About Job" id="job">
+            <input type="text" placeholder="Info About Job" maxlength="24" id="job">
             <br>
             <p>Duration</p>
             <select id="hrs">
@@ -57,15 +72,17 @@
                 <input type="time" id="time2">
                 <br>
             </div>
-            <input type="checkbox" value="now" oninput="checkbox()" id="checkbx"> Schedule my Dave for Now
-            <br>
             <br>
             <button onclick="completeDave()">Submit Request</button>
         </div>
-        <div id="waiting">
-            <p>Please leave this tab open while we try to find a Dave. We will search for one minute. Check the counter below.</p>
-            <p id="counter">87</p>
+        <div id="waiting" style="display: none;">
+            <p>Please leave this tab open while we try to find a Dave. We will search for one minute. Check the counter below. Please turn up your volume.</p>
+            <p id="counter">60</p>
         </div>
+        <div id="accepted" style="display: none">
+            <h2>Upcoming Jobs</h2>
+        </div>
+        <footer class="footer"><p id="nameText"></p></footer>
     </body>
     <script src="Login/js/auth.js"></script>
     <script src="Login/js/countdown.js"></script>

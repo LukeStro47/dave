@@ -3,7 +3,7 @@ function onTimer() {
     document.getElementById('counter').innerHTML = i;
     i--;
     if (i < 0) {
-        alert('You lose!');
+        wereDone();
     }
     else {
         setTimeout(onTimer, 1000);
