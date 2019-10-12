@@ -82,7 +82,20 @@
         <div id="accepted" style="display: none">
             <h2>Upcoming Jobs</h2>
         </div>
-        <footer class="footer"><p id="nameText"></p></footer>
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h1>Account Info</h1>
+                <p id="jobCount">Amount of Jobs:</p>
+                <input type="password" id="changePass" placeholder="New Password">
+                <button onclick="changePassword();">Change Password</button>
+                <input type="email" id="changeEmail" placeholder="New Email">
+                <button onclick="changeEmail();">Change Email</button>
+                <br>
+                <button onclick="signOut()">Sign Out</button>
+            </div>
+        </div>
+        <footer class="footer" onclick="openModal()"><p id="nameText"></p></footer>
     </body>
     <script src="Login/js/auth.js"></script>
     <script src="Login/js/countdown.js"></script>

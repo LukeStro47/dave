@@ -9,13 +9,24 @@ var firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 initApp();
-const sound = new Audio()
+const sound = new Audio();
 var canSearch = true;
 var canContinue = true;
 var latest;
 var allJobs;
 var storage;
-//jobNum, latest, jobCount
+var canMake = false;
+var modal = document.getElementById("myModal");
+var btn = document.getElementById("myBtn");
+var span = document.getElementsByClassName("close")[0];
+span.onclick = function() {
+  modal.style.display = "none";
+}
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
 function login() {
     firebase.auth().signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value).catch(function(error) {
         var errorCode = error.code;
@@ -42,7 +53,15 @@ function check() {
         if(firebase.auth().currentUser == null) {
             window.close();
         } else {
-            loadJob();
+            if(firebase.auth().currentUser.emailVerified == true) {
+                canMake = true;
+                loadJob();
+            } else {
+                alert("You need to verify your email to use our service. A new verification email has been sent to you.");
+                firebase.auth().currentUser.sendEmailVerification();
+                document.getElementById('cdButton').remove();
+                document.getElementById('callDave').remove();
+            }
         }
     }, 1000);
 }
@@ -53,7 +72,7 @@ function completeDave() {
     if(document.getElementById("hrs").value == "0" && document.getElementById("mins").value == "0" || document.getElementById("job").value == "" || document.getElementById("place").value == "" || document.getElementById('time').style.display == "block" && document.getElementById('time2').value == "") {
         alert("Please fill all fields");
     } else {
-        //if(document.getElementById("time2").value < ) {
+        if(checkTime() == true) {
             document.getElementById('callDave').style.display = "none";
             document.getElementById('waiting').style.display = "block";
             document.getElementById('cdButton').style.display = "none";
@@ -61,7 +80,6 @@ function completeDave() {
                 var data = snapshot.val();
                 if(data.Users[firebase.auth().currentUser.uid].active == "none") {
                     var jobN;
-                    storage = [jobN, data.Jobs.latest, data.Users[firebase.auth().currentUser.uid].jobNum];
                     sound.src = '../../assets/spanishFlea.mp3'
                     sound.play()
                     for(var i = 0; i < Object.keys(data).length + 1; i++) {
@@ -70,6 +88,7 @@ function completeDave() {
                             break;
                         }
                     }
+                    storage = [jobN, data.Jobs.latest, data.Users[firebase.auth().currentUser.uid].jobNum];
                     firebase.database().ref('Users/' + firebase.auth().currentUser.uid).update({
                         active: jobN,
                         jobNum: data.Users[firebase.auth().currentUser.uid].jobNum + 1
@@ -96,23 +115,51 @@ function completeDave() {
                             break;
                         }
                     }
-                    firebase.database().ref('Jobs/' + jobN).on('value', function(snapshot) {
-                        var jobData = snapshot.val();
-                        if(jobData.dave != "none") {
-                            canContinue = false;
-                            sound.pause();
-                            daveAccepted(jobN);
-                            firebase.database().ref('Jobs/' + jobN).off();
+                    firebase.database().ref('Jobs').on('value', function(snapshot) {
+                        if(snapshot.val()[jobN] != null) {
+                            var jobData = snapshot.val()[jobN];
+                            if(jobData.dave != "none") {
+                                canContinue = false;
+                                sound.pause();
+                                daveAccepted(jobN);
+                                firebase.database().ref('Jobs').off();
+                            }
+                        } else {
+                            firebase.database().ref('Jobs').off();
                         }
                     });
                } else {
                    alert("You already have an upcoming job. You may only have one job at once.")
                }
             });
-        //}
+        } else {
+            alert("Please order a dave for the future");
+        }
+    }
+}
+function checkTime() {
+    var dateNow = new Date();
+    var hours = parseInt(dateNow.getHours);
+    var mins = parseInt(dateNow.getMinutes);
+    var times = document.getElementById('time2').value;
+    var nHours = parseInt(times.substring(0, times.indexOf(':')));
+    var nMins = parseInt(times.substring(times.indexOf(":") + 1));
+    if(nhours > hours) {
+        return true;
+    } else if (nHours < hours) {
+        return false;
+    } else {
+        if(nMins > mins) {
+            return true;
+        } else if(nMins < mins) {
+            return false;
+        } else {
+            return false;
+        }
     }
 }
 function wereDone() {
+    sound.pause();
     canContinue = false;
     alert("No dave accepted your request.");
     firebase.database().ref('Users/' + firebase.auth().currentUser.uid).update({
@@ -285,13 +332,23 @@ function acceptJob() {
         if(users[firebase.auth().currentUser.uid].Accepted[2] == null) {
             if(checkBusy(users[firebase.auth().currentUser.uid], data, num) == true) {
                 if(data[num].accepted == false) {
-                    var full = parseInt(Object.keys(users[firebase.auth().currentUser.uid].Accepted).length) - 1;
+                    var full;
+                    for(var a = 0; a < Object.keys(users[firebase.auth().currentUser.uid].Accepted).length; a++) {
+                        if(users[firebase.auth().currentUser.uid].Accepted[a] == null) {
+                            full = a;
+                        }
+                    }
+                    //var full = parseInt(Object.keys(users[firebase.auth().currentUser.uid].Accepted).length) - 1;
                     firebase.database().ref('Jobs/' + num).update({
-                        accepted: true
+                        accepted: true,
+                        dave: firebase.auth().currentUser.uid
                     });
                     firebase.database().ref('Users/' + firebase.auth().currentUser.uid + '/Accepted/' + full).update({
                         jobNum: num,
                         time: data[num].time
+                    });
+                    firebase.database().ref('Users/' + firebase.auth().currentUser.uid).update({
+                        jobNum: users[firebase.auth().currentUser.uid].jobNum + 1
                     });
                 } else {
                     alert("This job has already been fulfilled");
@@ -422,4 +479,38 @@ function createAccepted(allData) {
         main.appendChild(loc);
         main.appendChild(document.createElement("br"));
     }
+}
+function forgotPassword() {
+    var email = prompt("What is your email?");
+    firebase.auth().sendPasswordResetEmail(email).then(function() {
+        alert("Email sent");
+    }).catch(function(error) {
+        alert("Error");
+    });
+}
+function openModal() {
+    modal.style.display = "block";
+}
+function changePassword() {
+    firebase.auth().currentUser.updatePassword(document.getElementById('changePass').value).then(function() {
+        alert("Password updated!");
+        document.getElementById('changePass').value = "";
+    }).catch(function(error) {
+        alert(error);
+    });
+}
+function changeEmail() {
+    firebase.auth().currentUser.updateEmail(document.getElementById('changeEmail').value).then(function() {
+        alert("Email updated!");
+        document.getElementById('changeEmail').value = "";
+    }).catch(function(error) {
+        alert(error);
+    });
+}
+function signOut() {
+    firebase.auth().signOut().then(function() {
+        location.replace('index.html');
+    }).catch(function(error) {
+        alert(error);
+    });
 }
