@@ -16,17 +16,24 @@ var latest;
 var allJobs;
 var storage;
 var canMake = false;
-var modal = document.getElementById("myModal");
-var btn = document.getElementById("myBtn");
-var span = document.getElementsByClassName("close")[0];
-span.onclick = function() {
-  modal.style.display = "none";
-}
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-}
+//var modal = document.getElementById("myModal");
+//var btn = document.getElementById("myBtn");
+//var span = document.getElementsByClassName("close")[0];
+//span.onclick = function() {
+//  modal.style.display = "none";
+//}
+//window.onclick = function(event) {
+//  if (event.target == modal) {
+//    modal.style.display = "none";
+//  }
+//}
+/*
+
+
+MAKE FOR ONLY DASH
+
+
+*/
 function login() {
     firebase.auth().signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value).catch(function(error) {
         var errorCode = error.code;
@@ -102,7 +109,9 @@ function completeDave() {
                         name: data.Users[firebase.auth().currentUser.uid].name,
                         dave: "none",
                         time: findToTime(),
-                        accepted: false
+                        accepted: false,
+                        uAccepted: false,
+                        dAccepted: false
                     });
                     onTimer();
                     firebase.database().ref('Jobs').update({
@@ -226,6 +235,7 @@ function loadJob() {
         var data = snapshot.val();
         document.getElementById('nameText').innerHTML = data.Users[firebase.auth().currentUser.uid].name;
         var num = data.Users[firebase.auth().currentUser.uid].active;
+        document.getElementById('jobCount').innerHTML += data.Users[firebase.auth().currentUser.uid].jobNum;
         if(num != "none") {
             document.getElementById('accepted').style.display = "block";
             var main = document.createElement("div");
@@ -285,6 +295,29 @@ function loadJob() {
             var realLoc = document.createTextNode(data.Jobs[num].location);
             loc.appendChild(realLoc);
             main.appendChild(loc);
+            //
+            var hereBtn = document.createElement("button");
+            var btnText = document.createTextNode("My Dave is Here");
+            hereBtn.appendChild(btnText);
+            hereBtn.id = "uHere";
+            hereBtn.onclick = function() { userHere(num); };
+            main.appendChild(hereBtn);
+            var countdown = document.createElement("p");
+            countdown.id = "countdown";
+            main.appendChild(countdown);
+            countdown.style.display = "none";
+            if(data.Jobs[num].timeDone != null) {
+                startCountdown("countdown", data.Jobs[num].timeDone);
+                document.getElementById('countdown').style.display = "block";
+                document.getElementById('uHere').remove();
+            }
+            if(data.Jobs[num].dAccepted == false && data.Jobs[num].uAccepted == true) {
+                document.getElementById('countdown').style.display = "block";
+                document.getElementById('countdown').innerHTML = "Awaiting for your employer to say you've arrived.";
+                document.getElementById('uHere').remove();
+                listenForOther(num, "d");
+            }
+            //
             main.appendChild(document.createElement("br"));
         }
     });
@@ -338,7 +371,6 @@ function acceptJob() {
                             full = a;
                         }
                     }
-                    //var full = parseInt(Object.keys(users[firebase.auth().currentUser.uid].Accepted).length) - 1;
                     firebase.database().ref('Jobs/' + num).update({
                         accepted: true,
                         dave: firebase.auth().currentUser.uid
@@ -378,7 +410,7 @@ function acceptJob() {
 
 //IT SHOWS THAT THERE ARE JOBS WHEN THERE ARE'nt -- Check accepted
 
-//MAKE JOBNUM FOR DAVES
+//MAKE JOBNUM FOR DAVES & MODAL
 
 //
 function checkBusy(userInfo, pendingInfo, jobNum) {
@@ -418,7 +450,7 @@ function checkBusy(userInfo, pendingInfo, jobNum) {
 }
 function createAccepted(allData) {
     var simplified = allData.Users[firebase.auth().currentUser.uid].Accepted;
-    for(var i = 0; i < Object.keys(simplified).length - 1; i++) {
+    for(var i = 0; i < Object.keys(simplified).length - 1; i++) (function(i) {
         var main = document.createElement("div");
         main.id = "accepted" + i;
         document.getElementById("allAccepted").appendChild(main);
@@ -477,8 +509,29 @@ function createAccepted(allData) {
         var realLoc = document.createTextNode(allData.Jobs[simplified[i].jobNum].location);
         loc.appendChild(realLoc);
         main.appendChild(loc);
+        var hereBtn = document.createElement("button");
+        var btnText = document.createTextNode("I'm Here");
+        hereBtn.appendChild(btnText);
+        hereBtn.id = "dHere" + simplified[i].jobNum;
+        hereBtn.onclick = function() { daveHere(simplified[i].jobNum); };
+        main.appendChild(hereBtn);
+        var countdown = document.createElement("p");
+        countdown.id = "countdown" + simplified[i].jobNum;
+        main.appendChild(countdown);
+        countdown.style.display = "none";
         main.appendChild(document.createElement("br"));
-    }
+        if(allData.Jobs[simplified[i].jobNum].timeDone != null) {
+            startCountdown("countdown" + simplified[i].jobNum, allData.Jobs[simplified[i].jobNum].timeDone);
+            document.getElementById('countdown' + simplified[i].jobNum).style.display = "block";
+            document.getElementById('dHere' + simplified[i].jobNum).remove();
+        }
+        if(allData.Jobs[simplified[i].jobNum].uAccepted == false && allData.Jobs[simplified[i].jobNum].dAccepted == true) {
+            document.getElementById('countdown' + simplified[i].jobNum).style.display = "block";
+            document.getElementById('countdown' + simplified[i].jobNum).innerHTML = "Awaiting for your employer to say you've arrived.";
+            document.getElementById('dHere' + simplified[i].jobNum).remove();
+            listenForOther(simplified[i].jobNum, "u");
+        }
+    })(i);
 }
 function forgotPassword() {
     var email = prompt("What is your email?");
@@ -514,3 +567,121 @@ function signOut() {
         alert(error);
     });
 }
+function daveHere(jNum) {
+    firebase.database().ref().once('value').then(function(snapshot) {
+        var data = snapshot.val();
+        if(data.Jobs[jNum].uAccepted == true) {
+            document.getElementById('dHere' + jNum).remove();
+            beginJob(data, jNum);
+            firebase.database().ref('Jobs/' + jNum).update({
+                dAccepted: true
+            });
+        } else {
+            firebase.database().ref('Jobs/' + jNum).update({
+                dAccepted: true
+            });
+            document.getElementById('countdown' + data.Jobs[jNum].jobNum).style.display = "block";
+            document.getElementById('countdown' + data.Jobs[jNum].jobNum).innerHTML = "Awaiting for your employer to say you've arrived.";
+            document.getElementById('dHere' + data.Jobs[jNum].jobNum).remove();
+            listenForOther(jNum, "u");
+        }
+    });
+}
+function userHere(jNum) {
+    firebase.database().ref().once('value').then(function(snapshot) {
+        var data = snapshot.val();
+        if(data.Jobs[jNum].dAccepted == true) {
+            document.getElementById('uHere').remove();
+            beginJob(data, jNum);
+            firebase.database().ref('Jobs/' + jNum).update({
+                uAccepted: true
+            });
+        } else {
+            firebase.database().ref('Jobs/' + jNum).update({
+                uAccepted: true
+            });
+            document.getElementById('countdown').style.display = "block";
+            document.getElementById('countdown').innerHTML = "Awaiting for your Dave to say he's arrived.";
+            listenForOther(jNum, "d");
+        }
+    });
+}
+function beginJob(fullData, jNum) {
+    var firstDate = new Date();
+    //2015-03-25T12:00:00-04:00
+    var hrs = fullData.Jobs[jNum].hrs;
+    var mins = fullData.Jobs[jNum].mins;
+    var dateTogether = firstDate.getFullYear() + "-" + returnMonth(parseInt(firstDate.getMonth()) + 1) + "-" + returnMonth(firstDate.getDate()) + "T" + findTime(hrs, mins) + "-04:00";
+    firebase.database().ref('Jobs/' + jNum).update({
+        timeDone: dateTogether
+    });
+    if(fullData.Users[firebase.auth().currentUser.uid].status == "dave") {
+        document.getElementById('countdown' + jNum).style.display = "block";
+        startCountdown('countdown' + jNum, dateTogether);
+    }
+}
+function returnMonth(month) {
+    if(month.toString().length == 1) {
+        return "0" + month.toString();
+    } else {
+        return month;
+    }
+}
+function findTime(hrs, mins) {
+    var now = new Date();
+    var fHours = parseInt(now.getHours()) + parseInt(hrs);
+    if(fHours > 23) {
+        fHours -= 24;
+    }
+    if(fHours.toString().length == 1) {
+        fHours = "0" + fHours;
+    }
+    var fMins = parseInt(now.getMinutes()) + parseInt(mins);
+    if(fMins > 59) {
+        fMins -= 60;
+    }
+    if(fMins.toString().length == 1) {
+        fMins = "0" + fMins;
+    }
+    var fSecs = parseInt(now.getSeconds());
+    if(fSecs.toString().length == 1) {
+        fSecs = "0" + fSecs;
+    }
+    return fHours.toString() + ":" + fMins.toString() + ":" + fSecs;
+}
+function startCountdown(id, date) {
+    var deadline = new Date(date).getTime();
+    var x = setInterval(function() {
+    var now = new Date().getTime();
+    var t = deadline - now;
+    var hours = Math.floor((t%(1000 * 60 * 60 * 24))/(1000 * 60 * 60)); 
+    var minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60)); 
+    var seconds = Math.floor((t % (1000 * 60)) / 1000);
+    document.getElementById(id).innerHTML = hours + " hours " + minutes + " minutes " + seconds + " seconds remaining in your job." + "<br>Or until your employer releases you early."; 
+        if (t < 0) { 
+            clearInterval(x); 
+            document.getElementById(id).innerHTML = "EXPIRED"; 
+        } 
+    }, 1000);
+}
+function listenForOther(jobN, char) {
+    firebase.database().ref().on('value', function(snapshot) {
+        var data = snapshot.val();
+        if(data.Jobs[jobN][char + "Accepted"] == true) {
+            if(char == "u") {
+                startCountdown("countdown" + jobN, data.Jobs[jobN].timeDone);
+                firebase.database().ref().off();
+            } else {
+                document.getElementById('uHere').innerHTML = "Release Dave Early";
+                //HERE
+                startCountdown("countdown", data.Jobs[jobN].timeDone);
+                firebase.database().ref().off();
+            }
+        }
+    });
+}
+/*
+
+YET TO DO: Other comment, release dave early, countdown ends, rating system, signup
+
+*/
