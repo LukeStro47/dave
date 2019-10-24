@@ -16,7 +16,6 @@ var latest;
 var allJobs;
 var storage;
 var status = "d";
-//var canMake = false;
 var canCountdown = true;
 var canDo2 = true;
 var waitingJob = false;
@@ -41,19 +40,6 @@ if(document.getElementById('myModal') != null) {
         }
     }
 }
-window.addEventListener('beforeunload', function (e) { 
-    e.preventDefault();
-    e.returnValue = '';
-    if(status == "u" && waitingJob == true) {
-        canContinue = false;
-        firebase.database().ref('Users/' + firebase.auth().currentUser.uid).update({
-            active: "none",
-            jobNum: storage[2]
-        });
-        firebase.database().ref('Jobs/' + storage[0]).remove();
-        removeRank(storage[0]);
-    }
-});
 function login() {
     firebase.auth().signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value).catch(function(error) {
         var errorCode = error.code;
@@ -82,7 +68,6 @@ function check() {
             window.close();
         } else {
             if(firebase.auth().currentUser.emailVerified == true) {
-//               canMake = true;
                 loadJob();
             } else {
                 alert("You need to verify your email to use our service. A new verification email has been sent to you.");
@@ -108,6 +93,7 @@ function completeDave() {
                 firebase.database().ref().once('value').then(function(snapshot) {
                     var data = snapshot.val();
                     if(data.Users[firebase.auth().currentUser.uid].active == "none") {
+                        window.addEventListener('beforeunload', leaveTab());
                         var jobN;
                         sound.src = '../../assets/spanishFlea.mp3';
                         sound.play();
@@ -156,6 +142,7 @@ function completeDave() {
                                 var jobData = snapshot.val()[jobN];
                                 if(jobData.dave != "none") {
                                     canContinue = false;
+                                    window.removeEventListener('beforeunload', leaveTab());
                                     waitingJob = false;
                                     sound.pause();
                                     daveAccepted(jobN);
@@ -199,6 +186,7 @@ function checkTime() {
     }
 }
 function wereDone() {
+    window.removeEventListener('beforeunload', leaveTab());
     waitingJob = false;
     sound.pause();
     canContinue = false;
@@ -1053,4 +1041,15 @@ function removeRank(num) {
             }
         }
     });
+}
+function leaveTab() {
+    if(status == "u" && waitingJob == true) {
+        canContinue = false;
+        firebase.database().ref('Users/' + firebase.auth().currentUser.uid).update({
+            active: "none",
+            jobNum: storage[2]
+        });
+        firebase.database().ref('Jobs/' + storage[0]).remove();
+        removeRank(storage[0]);
+    }
 }
