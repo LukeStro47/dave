@@ -40,7 +40,8 @@ if(document.getElementById('myModal') != null) {
           modal.style.display = "none";
         }
     }
-}*window.addEventListener('beforeunload', function (e) { 
+}
+window.addEventListener('beforeunload', function (e) { 
     e.preventDefault();
     e.returnValue = '';
     if(status == "u" && waitingJob == true) {
