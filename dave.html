@@ -7,6 +7,13 @@
         <script src="https://www.gstatic.com/firebasejs/6.6.0/firebase-database.js"></script>
         <script src="https://www.gstatic.com/firebasejs/6.6.0/firebase-auth.js"></script>
         <link rel="stylesheet" href="css/dave.css">
+        <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/emailjs-com@2.4.0/dist/email.min.js"></script>
+        <script type="text/javascript">
+            (function(){
+                emailjs.init("user_9jzubAKlBplngwwYCfnBw");
+            })();
+        </script>
         <title></title>
     </head>
     <body onload="checkDave()">
@@ -22,11 +29,35 @@
                 <p id="jobD"><b>Job Description: </b><p>
                 <p id="time"><b>Time: </b><p>
                 <p id="location"><b>Location: </b><p>
+                <p id="preference"><b>Preference: </b><p>
                 <button id="accept" onclick="acceptJob();">Accept</button>
             </div>
         </div>
         <div id="allAccepted">
-            <h2>Jobs Accepted</h2>
+            <h2 id="acceptedHeading">Jobs Accepted</h2>
+        </div>
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h1>Account Info</h1>
+                <p id="jobCount">Amount of Jobs: </p>
+                <p id="rating">Your Rating: </p>
+                <p id="mins">Community Service Hours: </p>
+                <br>
+                <button onclick="cashHours();">Get Hours Sent to You</button>
+                <br>
+                <input type="password" id="changePass" placeholder="New Password">
+                <button onclick="changePassword();">Change Password</button>
+                <br>
+                <input type="email" id="changeEmail" placeholder="New Email">
+                <button onclick="changeEmail();">Change Email</button>
+                <br>
+                <br>
+                <button onclick="signOut();">Sign Out</button>
+                <br>
+                <br>
+                <p>Need support? Text (856) 573-0897</p>
+            </div>
         </div>
         <footer>
             <br>
@@ -36,6 +67,7 @@
                 You have an available job request. Please refresh.
             </div>
         </footer>
+        <div class="footer" onclick="openModal()"><p id="nameText"></p></div>
     </body>
     <script src="Login/js/auth.js"></script>
 </html>

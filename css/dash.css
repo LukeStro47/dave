@@ -59,3 +59,6 @@ h1 {
   text-decoration: none;
   cursor: pointer;
 }
+button {
+    margin: 0 auto;
+}

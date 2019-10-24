@@ -2,10 +2,11 @@ var i = 60
 function onTimer() {
     document.getElementById('counter').innerHTML = i;
     i--;
-    if (i < 0) {
+    if(i < 0) {
         wereDone();
-    }
-    else {
+    } else if(canCountdown == false) {
+        return true;
+    } else {
         setTimeout(onTimer, 1000);
     }
 }
