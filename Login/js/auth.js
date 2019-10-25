@@ -129,6 +129,7 @@ function completeDave() {
                         firebase.database().ref('Jobs').update({
                             latest: jobN
                         });
+                        console.log("ree")
                         waitingJob = true;
                         for(var a = 0; a < Object.keys(data.List).length; a++) {
                             if(canContinue) {
@@ -142,7 +143,6 @@ function completeDave() {
                                 var jobData = snapshot.val()[jobN];
                                 if(jobData.dave != "none") {
                                     canContinue = false;
-                                    window.removeEventListener('beforeunload', leaveTab());
                                     waitingJob = false;
                                     sound.pause();
                                     daveAccepted(jobN);
@@ -186,7 +186,6 @@ function checkTime() {
     }
 }
 function wereDone() {
-    window.removeEventListener('beforeunload', leaveTab());
     waitingJob = false;
     sound.pause();
     canContinue = false;
@@ -1044,6 +1043,7 @@ function removeRank(num) {
 }
 function leaveTab() {
     if(status == "u" && waitingJob == true) {
+        console.log("ye")
         canContinue = false;
         firebase.database().ref('Users/' + firebase.auth().currentUser.uid).update({
             active: "none",
@@ -1051,5 +1051,8 @@ function leaveTab() {
         });
         firebase.database().ref('Jobs/' + storage[0]).remove();
         removeRank(storage[0]);
+        firebase.database().ref('Jobs').update({
+            latest: "none"
+        });
     }
 }
