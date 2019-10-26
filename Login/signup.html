@@ -1,101 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<title>Login V8</title>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-<!--===============================================================================================-->	
-	<link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
-<!--===============================================================================================-->	
-	<link rel="stylesheet" type="text/css" href="vendor/css-hamburgers/hamburgers.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/animsition/css/animsition.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
-<!--===============================================================================================-->	
-	<link rel="stylesheet" type="text/css" href="vendor/daterangepicker/daterangepicker.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="css/util.css">
-	<link rel="stylesheet" type="text/css" href="css/main.css">
-    <script src="https://www.gstatic.com/firebasejs/6.6.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/6.6.0/firebase-auth.js"></script>
+    <head>
+        <title>Login V8</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="../css/signup.css">
+        <script src="https://www.gstatic.com/firebasejs/6.6.0/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/6.6.0/firebase-auth.js"></script>
         <script src="https://www.gstatic.com/firebasejs/6.6.0/firebase-database.js"></script>
-<!--===============================================================================================-->
-</head>
-<body>
-	
-	<div class="limiter">
-		<div class="container-login100">
-			<div class="wrap-login100">
-				<div class="login100-form validate-form p-l-55 p-r-55 p-t-178">
-					<span class="login100-form-title">
-						Sign In
-					</span>
+    </head>
+    <body>
+        <div class="user">
+            <header class="user__header">
+                <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3219/logo.svg" alt="" />
+                <h1 class="user__title">The Dave Initiative</h1>
+            </header>
 
-					<div class="wrap-input100 validate-input m-b-16" data-validate="Please enter username">
-						<input class="input100" type="text" placeholder="Email" id="email">
-						<span class="focus-input100"></span>
-					</div>
+            <div class="form" id="form">
+                <div class="form__group">
+                    <input type="text" placeholder="Name" class="form__input" id="name">
+                </div>
 
-					<div class="wrap-input100 validate-input" data-validate = "Please enter password">
-						<input class="input100" type="password" placeholder="Password" id="password">
-						<span class="focus-input100"></span>
-					</div>
+                <div class="form__group">
+                    <input type="email" placeholder="Email" class="form__input" id="email">
+                </div>
 
-					<div class="text-right p-t-13 p-b-23" onclick="forgotPassword()">
-						<span class="txt1">
-							Forgot
-						</span>
+                <div class="form__group">
+                    <input type="password" placeholder="Password" class="form__input" id="password">
+                </div>
+                
+                <div class="form__group">
+                    <select class="form__input" id="type">
+                        <option selected disabled value="n">Please Select your Job</option>
+                        <option value="d">Dave</option>
+                        <option value="e">Employer</option>
+                    </select>
+                </div>
 
-						<a href="#" class="txt2">
-							Password?
-						</a>
-					</div>
-
-					<div class="container-login100-form-btn">
-						<button class="login100-form-btn" onclick="login()">
-							Sign in
-						</button>
-					</div>
-
-					<div class="flex-col-c p-t-170 p-b-40">
-						<span class="txt1 p-b-9" id="unique">
-							Don’t have an account?
-						</span>
-
-						<a href="#" class="txt3">
-							Sign up now
-						</a>
-					</div>
-				</div> <!--!-->
-			</div>
-		</div>
-	</div>
-	
-	
-<!--===============================================================================================-->
-	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
-    <script src="js/auth.js"></script>
-<!--===============================================================================================-->
-	<script src="vendor/animsition/js/animsition.min.js"></script>
-<!--===============================================================================================-->
-	<script src="vendor/bootstrap/js/popper.js"></script>
-	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-<!--===============================================================================================-->
-	<script src="vendor/select2/select2.min.js"></script>
-<!--===============================================================================================-->
-	<script src="vendor/daterangepicker/moment.min.js"></script>
-	<script src="vendor/daterangepicker/daterangepicker.js"></script>
-<!--===============================================================================================-->
-	<script src="vendor/countdowntime/countdowntime.js"></script>
-<!--===============================================================================================-->
-	<script src="js/main.js"></script>
-
-</body>
+                <button class="btn" type="submit" onclick="createAccount();">Register</button>
+            </div>
+            
+            <div id="oath" style="display: block;">
+                <p style="text-align: justify">"I, <a class="name"></a>, do solemnly swear (or affirm) that I will support the Constitution of the United States, the constitution and the laws of the state of Oregon, and the policies of <a class="name"></a> School District (ESD or Community College). During my term, I will faithfully and impartially discharge the responsibilities of the office to the best of my ability."</p>
+                <br>
+                <div>
+                    <input type="checkbox" oninput="confirm();">I understand and have taken the oath
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyB0Om-pggrXGPrdTDmb-TLF8oefyWHVth4",
+            authDomain: "the-dave-initiative.firebaseapp.com",
+            databaseURL: "https://the-dave-initiative.firebaseio.com",
+            projectId: "the-dave-initiative",
+            storageBucket: "",
+            messagingSenderId: "637804637403",
+            appId: "1:637804637403:web:dec14656b88e73798fb0fe"
+        };
+        firebase.initializeApp(firebaseConfig);
+        function createAccount() {
+            if(document.getElementById('name').value != "" && document.getElementById('password').value != "" && document.getElementById('email').value != "" && document.getElementById('type').value != "n") {
+                var email = document.getElementById('email').value;
+                var password = document.getElementById('password').value;
+                if(document.getElementById('type').value == "e") {
+                    firebase.auth().createUserWithEmailAndPassword(email, password).then(function() {
+                        firebase.auth().currentUser.sendEmailVerification();
+                        firebase.database().ref('Users/' + firebase.auth().currentUser.uid).update({
+                            name: document.getElementById('name').value,
+                            jobNum: 0,
+                            active: "none",
+                            status: "master"
+                        });
+                        firebase.database().ref('Users/' + firebase.auth().currentUser.uid + '/Average').update({
+                            num: 0,
+                            sum: 0
+                        });
+                        alert("Check your email for a verification email.");
+                        location.replace('index.html');
+                    }).catch(function(error) {
+                        alert(error);
+                        location.reload();
+                    });
+                } else {
+                    document.getElementById('form').style.display = "none";
+                    document.getElementById('oath').style.display = "block";
+                    var names = document.getElementsByClassName('name');
+                    for(var i = 0; i < names.length; i++) {
+                        names[i].innerHTML = document.getElementById('name').value;
+                    }
+                    
+                }
+            } else {
+                alert("Please fill out all fields");
+            }
+        }
+        function confirm() {
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+            firebase.auth().createUserWithEmailAndPassword(email, password).then(function() {
+                firebase.auth().currentUser.sendEmailVerification();
+                firebase.database().ref('Users/' + firebase.auth().currentUser.uid).update({
+                    name: document.getElementById('name').value,
+                    jobNum: 0,
+                    mins: 0,
+                    status: "dave"
+                });
+                firebase.database().ref('Users/' + firebase.auth().currentUser.uid + '/Accepted').update({
+                    placeholder: true
+                });
+                firebase.database().ref('Users/' + firebase.auth().currentUser.uid + '/Average').update({
+                    num: 0,
+                    sum: 0
+                });
+                alert("Check your email for a verification email.");
+                location.replace('index.html');
+            }).catch(function(error) {
+                alert(error);
+                location.reload();
+            });
+        }
+    </script>
 </html>

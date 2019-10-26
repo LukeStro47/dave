@@ -25,6 +25,6 @@
         firebase.auth().createUserWithEmailAndPassword(email, pass).then(function() {
             alert("done. please verify your email");
             firebase.auth().currentUser.sendEmailVerification();
-        })
+        });
     </script>
 </html>
