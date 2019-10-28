@@ -424,6 +424,9 @@ function loadJob() {
                 active: "none",
                 jobNum: parseInt(data.Users[firebase.auth().currentUser.uid].jobNum) - 1
             });
+            firebase.database().ref('Jobs').update({
+                latest: "none"
+            });
             firebase.database().ref('Jobs/' + num).remove();
             removeRank(num);
         }
