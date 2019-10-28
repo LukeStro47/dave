@@ -9,7 +9,7 @@ var firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 initApp();
-const sound = new Audio();
+const sound = document.getElementById('audioID');
 var canSearch = true;
 var canContinue = true;
 var latest;
@@ -80,6 +80,7 @@ function check() {
 }
 function callDave() {
     document.getElementById('callDave').style.display = "block";
+    document.getElementById('info').style.display = "none";
 }
 function completeDave() {
     if(document.getElementById("hrs").value == "0" && document.getElementById("mins").value == "0" || document.getElementById("job").value == "" || document.getElementById("place").value == "" || document.getElementById('time').style.display == "block" && document.getElementById('time2').value == "") {
@@ -93,9 +94,7 @@ function completeDave() {
                 firebase.database().ref().once('value').then(function(snapshot) {
                     var data = snapshot.val();
                     if(data.Users[firebase.auth().currentUser.uid].active == "none") {
-                        window.addEventListener('beforeunload', leaveTab());
                         var jobN;
-                        sound.src = '../../assets/spanishFlea.mp3';
                         sound.play();
                         for(var i = 0; i < Object.keys(data).length + 1; i++) {
                             if(data.Jobs[i] == null) {
@@ -199,6 +198,9 @@ function wereDone() {
     });
     firebase.database().ref('Jobs/' + storage[0]).remove();
     removeRank(storage[0]);
+    setTimeout(function() {
+        location.reload();
+    }, 500);
 }
 function findToTime() {
     var times = document.getElementById('time2').value.toString();
@@ -245,36 +247,46 @@ function checkDave() {
         if(firebase.auth().currentUser == null) {
             window.close();
         } else {
-            firebase.database().ref().once('value').then(function(snapshot) {
-                var data = snapshot.val();
-                latest = data.Jobs.latest;
-                triggerListen();
-                if(data.Users[firebase.auth().currentUser.uid].status != "dave") {
-                    window.close();
-                } else {
-                    document.getElementById('nameText').innerHTML = data.Users[firebase.auth().currentUser.uid].name;
-                    document.getElementById('jobCount').innerHTML += data.Users[firebase.auth().currentUser.uid].jobNum;
-                    var mins = data.Users[firebase.auth().currentUser.uid].mins;
-                    var hrs = Math.round((mins / 60) * 10) / 10;
-                    document.getElementById('mins').innerHTML += hrs.toString();
-                    if(parseInt(data.Users[firebase.auth().currentUser.uid].Average.num) != 0) {
-                        var total = parseInt(data.Users[firebase.auth().currentUser.uid].Average.sum);
-                        var amount = parseInt(data.Users[firebase.auth().currentUser.uid].Average.num);
-                        var average = Math.round((total/amount) * 10) / 10;
-                        document.getElementById('rating').innerHTML += average.toString() + "/5";
+            if(firebase.auth().currentUser.emailVerified == false) {
+                alert("You need to verify your email to use our service. A new verification email has been sent to you.");
+                firebase.auth().currentUser.sendEmailVerification();
+                document.getElementById('none').remove();
+                document.getElementById('job').remove();
+                document.getElementById('info').remove();
+                document.getElementById('allAccepted').remove();
+            } else {
+                firebase.database().ref().once('value').then(function(snapshot) {
+                    var data = snapshot.val();
+                    latest = data.Jobs.latest;
+                    triggerListen();
+                    if(data.Users[firebase.auth().currentUser.uid].status != "dave") {
+                        window.close();
                     } else {
-                        document.getElementById('rating').innerHTML += "No ratings yet";
+                        document.getElementById('nameText').innerHTML = data.Users[firebase.auth().currentUser.uid].name;
+                        document.getElementById('jobCount').innerHTML += data.Users[firebase.auth().currentUser.uid].jobNum;
+                        var mins = data.Users[firebase.auth().currentUser.uid].mins;
+                        var hrs = Math.round((mins / 60) * 10) / 10;
+                        document.getElementById('mins').innerHTML += hrs.toString();
+                        if(parseInt(data.Users[firebase.auth().currentUser.uid].Average.num) != 0) {
+                            var total = parseInt(data.Users[firebase.auth().currentUser.uid].Average.sum);
+                            var amount = parseInt(data.Users[firebase.auth().currentUser.uid].Average.num);
+                            var average = Math.round((total/amount) * 10) / 10;
+                            document.getElementById('rating').innerHTML += average.toString() + "/5";
+                        } else {
+                            document.getElementById('rating').innerHTML += "No ratings yet";
+                        }
+                        if(Object.keys(data.Jobs).length > 1) {
+                            addJobs(data.Jobs);
+                        }
+                        if(Object.keys(data.Users[firebase.auth().currentUser.uid].Accepted).length > 1) {
+                            document.getElementById('info').style.display = "none";
+                            createAccepted(data);
+                        } else {
+                            document.getElementById('acceptedHeading').style.display = "none";
+                        }
                     }
-                    if(Object.keys(data.Jobs).length > 1) {
-                        addJobs(data.Jobs);
-                    }
-                    if(Object.keys(data.Users[firebase.auth().currentUser.uid].Accepted).length > 1) {
-                        createAccepted(data);
-                    } else {
-                        document.getElementById('acceptedHeading').style.display = "none";
-                    }
-                }
-            });
+                });
+            }
         }
     }, 1000);
 }
@@ -293,16 +305,31 @@ function loadJob() {
             document.getElementById('rating').innerHTML += "No ratings yet";
         }
         if(num != "none" && data.Jobs[num].accepted == true) {
+            document.getElementById('info').style.display = "none";
             document.getElementById('accepted2').style.display = "block";
             var main = document.createElement("div");
             main.id = "accepted";
             document.getElementById("accepted2").appendChild(main);
+            var total;
+            var amount;
+            var average;
+            var canAverage = false;
             var name = document.createElement("p");
+            if(parseInt(data.Users[data.Jobs[num].dave].Average.sum) != 0) {
+                total = parseInt(data.Users[data.Jobs[num].dave].Average.sum);
+                amount = parseInt(data.Users[data.Jobs[num].dave].Average.num);
+                average = Math.round((total/amount) * 10) / 10;
+            }
             var boldName = document.createTextNode("Name of Dave: ");
             var boldsName = document.createElement("b");
             boldsName.appendChild(boldName);
             name.appendChild(boldsName);
-            var realName = document.createTextNode(data.Jobs[num].preference);
+            var realName;
+            if(canAverage == false) {
+                realName = document.createTextNode(data.Jobs[num].preference);
+            } else {
+                realName = document.createTextNode(data.Jobs[num].preference + " (" + average.toString() + "/5)");
+            }
             name.appendChild(realName);
             main.appendChild(name)
             var desc = document.createElement("p");
@@ -414,6 +441,7 @@ function addJobs(jobList) {
     allJobs = jobList;
     for(var i = 0; i < Object.keys(jobList).length - 1; i++) {
         if(allJobs[i].accepted == false) {
+            document.getElementById('info').style.display = "none";
             document.getElementById('job').style.display = "block";
             var newOption = document.createElement("option");
             newOption.innerHTML = allJobs[i].jobInfo;
@@ -708,8 +736,12 @@ function changePassword() {
 }
 function changeEmail() {
     firebase.auth().currentUser.updateEmail(document.getElementById('changeEmail').value).then(function() {
-        alert("Email updated!");
         document.getElementById('changeEmail').value = "";
+        firebase.auth().currentUser.sendEmailVerification();
+        setTimeout(function(){
+            alert("Check your email for a verification email.");
+            location.replace('index.html');
+        }, 500);
     }).catch(function(error) {
         alert(error);
     });

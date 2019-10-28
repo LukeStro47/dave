@@ -71,6 +71,10 @@ body {
     }
 }
 
+#type {
+    background-color: white;
+}
+
 .btn {
     display: block;
     width: 100%;
@@ -136,7 +140,7 @@ body {
 }
 .name {
     text-decoration: none;
-    color: cadetblue;
+    color: indianred;
 }
 .name:hover {
     cursor: default;

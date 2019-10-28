@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Login V8</title>
+        <title>The Dave Initiative</title>
+        <link rel="icon" href="assets/favicon.ico">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="../css/signup.css">
         <script src="https://www.gstatic.com/firebasejs/6.6.0/firebase-app.js"></script>
         <script src="https://www.gstatic.com/firebasejs/6.6.0/firebase-auth.js"></script>
         <script src="https://www.gstatic.com/firebasejs/6.6.0/firebase-database.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Great+Vibes&display=swap" rel="stylesheet">
     </head>
     <body>
         <div class="user">
             <header class="user__header">
                 <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3219/logo.svg" alt="" />
-                <h1 class="user__title">The Dave Initiative</h1>
+                <h1 class="user__title" style="font-family: 'Roboto'">The Dave Initiative</h1>
             </header>
 
             <div class="form" id="form">
@@ -40,8 +43,8 @@
                 <button class="btn" type="submit" onclick="createAccount();">Register</button>
             </div>
             
-            <div id="oath" style="display: block;">
-                <p style="text-align: justify">"I, <a class="name"></a>, do solemnly swear (or affirm) that I will support the Constitution of the United States, the constitution and the laws of the state of Oregon, and the policies of <a class="name"></a> School District (ESD or Community College). During my term, I will faithfully and impartially discharge the responsibilities of the office to the best of my ability."</p>
+            <div id="oath" style="display: none;">
+                <p style="text-align: justify; font-family: 'Great Vibes'">I, <a class="name"></a> (Dave), solemnly swear that I will faithfully execute the position of Dave as a subordinate of The Dave Initiative, and will preserve, protect, and defend the reputation of The Dave Initiative by providing my absolute servitude. I swear to execute all tasks to their completion and with the utmost quality. I understand that I will only do and that there is no try and that no order I receive shall be questioned, rather executed to exact precision without second thought. My emotional state, moral judgement, and/or physical health will not hinder the success of my mission. In a particular way, I promise and swear to observe with the greatest fidelity and will all persons, Dave or non-Dave, secrecy regarding everything that in any way relates to my missions. I am Dave.</p>
                 <br>
                 <div>
                     <input type="checkbox" oninput="confirm();">I understand and have taken the oath
@@ -77,8 +80,10 @@
                             num: 0,
                             sum: 0
                         });
-                        alert("Check your email for a verification email.");
-                        location.replace('index.html');
+                        setTimeout(function(){
+                            alert("Check your email for a verification email.");
+                            location.replace('index.html');
+                        }, 500);
                     }).catch(function(error) {
                         alert(error);
                         location.reload();
@@ -90,7 +95,6 @@
                     for(var i = 0; i < names.length; i++) {
                         names[i].innerHTML = document.getElementById('name').value;
                     }
-                    
                 }
             } else {
                 alert("Please fill out all fields");
@@ -114,8 +118,10 @@
                     num: 0,
                     sum: 0
                 });
-                alert("Check your email for a verification email.");
-                location.replace('index.html');
+                setTimeout(function(){
+                    alert("Check your email for a verification email.");
+                    location.replace('index.html');
+                }, 500);
             }).catch(function(error) {
                 alert(error);
                 location.reload();

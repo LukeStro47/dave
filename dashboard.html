@@ -21,11 +21,13 @@
 </script>
         <script src="assets/OneSignal/OneSignalSDKUpdaterWorker.js"></script>
         <script src="assets/OneSignal/OneSignalSDKWorker.js"></script>!-->
-        <title></title>
+        <title>The Dave Initiative</title>
+        <link rel="icon" href="assets/favicon.ico">
     </head>
     <body onload="check()">
         <h1>The Dave Initiative</h1>
         <button onclick="callDave();" id="cdButton">Call a Dave</button>
+        <p id="info">You can see the amount of jobs you've requested, your rating, and contact support by clicking on the red footer with your name on it at the bottom.</p>
         <div id="callDave" style="display: none">
             <br>
             <p>Location</p>
@@ -79,6 +81,9 @@
             <p>Please leave this tab open while we try to find a Dave. We will search for one minute. Check the counter below. Please turn up your volume.</p>
             <p id="counter">60</p>
         </div>
+        <audio id="audioID">
+              <source src="assets/spanishFlea.mp3" type="audio/mp3" preload="auto">
+        </audio>
         <div id="accepted2" style="display: none">
             <h2>Upcoming Jobs</h2>
         </div>
@@ -101,6 +106,9 @@
                 <br>
                 <br>
                 <button onclick="signOut()">Sign Out</button>
+                <br>
+                <br>
+                <p>Need support? Open a ticket <a href="https://desk.zoho.com/portal/daveinitiative/">here.</a></p>
             </div>
         </div>
         <footer class="footer" onclick="openModal()"><p id="nameText"></p></footer>

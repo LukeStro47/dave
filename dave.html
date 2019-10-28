@@ -14,7 +14,9 @@
                 emailjs.init("user_9jzubAKlBplngwwYCfnBw");
             })();
         </script>
-        <title></title>
+        <title>The Dave Initiative</title>
+        <link rel="icon" href="assets/favicon.ico">
+        <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
     </head>
     <body onload="checkDave()">
         <h1 id="uptop">Welcome, Dave</h1>
@@ -33,9 +35,15 @@
                 <button id="accept" onclick="acceptJob();">Accept</button>
             </div>
         </div>
+        <p id="info">While waiting for a job to come in, you can check your rating, the amount of jobs you've done, and the number of community service hours you've accrued by hitting the red footer with your name on it.</p>
         <div id="allAccepted">
             <h2 id="acceptedHeading">Jobs Accepted</h2>
         </div>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
         <div id="myModal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
@@ -43,8 +51,8 @@
                 <p id="jobCount">Amount of Jobs: </p>
                 <p id="rating">Your Rating: </p>
                 <p id="mins">Community Service Hours: </p>
-                <br>
                 <button onclick="cashHours();">Get Hours Sent to You</button>
+                <br>
                 <br>
                 <input type="password" id="changePass" placeholder="New Password">
                 <button onclick="changePassword();">Change Password</button>
@@ -56,7 +64,7 @@
                 <button onclick="signOut();">Sign Out</button>
                 <br>
                 <br>
-                <p>Need support? Text (856) 573-0897</p>
+                <p>Need support? Open a ticket <a href="https://desk.zoho.com/portal/daveinitiative/">here.</a></p>
             </div>
         </div>
         <footer>
