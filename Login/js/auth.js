@@ -128,15 +128,7 @@ function completeDave() {
                         firebase.database().ref('Jobs').update({
                             latest: jobN
                         });
-                        console.log("ree")
                         waitingJob = true;
-                        for(var a = 0; a < Object.keys(data.List).length; a++) {
-                            if(canContinue) {
-                                //send message
-                            } else {
-                                break;
-                            }
-                        }
                         firebase.database().ref('Jobs').on('value', function(snapshot) {
                             if(snapshot.val()[jobN] != null) {
                                 var jobData = snapshot.val()[jobN];
