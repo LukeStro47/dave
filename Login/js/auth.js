@@ -694,6 +694,7 @@ function createAccepted(allData) {
         hereBtn.appendChild(btnText);
         hereBtn.id = "dHere" + simplified[i].jobNum;
         hereBtn.onclick = function() { daveHere(simplified[i].jobNum); };
+        hereBtn.style.display = "none";
         main.appendChild(hereBtn);
         var countdown = document.createElement("p");
         countdown.id = "countdown" + simplified[i].jobNum;
@@ -715,6 +716,9 @@ function createAccepted(allData) {
             document.getElementById('countdown' + simplified[i].jobNum).innerHTML = "Awaiting for your employer to say you've arrived.";
             document.getElementById('dHere' + simplified[i].jobNum).remove();
             listenForOther(simplified[i].jobNum, "u");
+        } else if(allData.Jobs[simplified[i].jobNum].dAccepted == false) {
+            document.getElementById('dHere' + simplified[i].jobNum).style.display = "block";
+            document.getElementById('dHere' + simplified[i].jobNum).style.margin = "0 auto";
         }
     })(i);
 }
