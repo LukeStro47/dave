@@ -32,11 +32,13 @@ if(document.getElementById('myModal') != null) {
     var btn = document.getElementById("myBtn");
     var span = document.getElementsByClassName("close")[0];
     span.onclick = function() {
-      modal.style.display = "none";
+        document.getElementById('brs').style.display = "block";
+        modal.style.display = "none";
     }
     window.onclick = function(event) {
         if (event.target == modal) {
-          modal.style.display = "none";
+            document.getElementById('brs').style.display = "block";
+            modal.style.display = "none";
         }
     }
 }
@@ -724,6 +726,7 @@ function forgotPassword() {
 }
 function openModal() {
     modal.style.display = "block";
+    document.getElementById('brs').style.display = "none";
 }
 function changePassword() {
     firebase.auth().currentUser.updatePassword(document.getElementById('changePass').value).then(function() {
